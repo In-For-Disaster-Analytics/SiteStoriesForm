@@ -1,2 +1,9 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+{
+  "tag": "An optional identifier",
+  "elements": [
+    {
+      "sourceUri": "/Users/wmobley/Desktop/test.mp3",
+      "destinationUri": "tapis://ls6.wmobley//corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/test.mp3"
+    }
+  ]
+}
