@@ -32,6 +32,7 @@ function App() {
 
   const triggerUpdate = () => {
     setUpdateTrigger(prev => prev + 1);
+    setActiveTab('list');
   };
 
   return (
