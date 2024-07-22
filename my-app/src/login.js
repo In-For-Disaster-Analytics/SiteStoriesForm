@@ -18,8 +18,7 @@ const Login = () => {
           'Content-Type': 'application/json'
         }
       }).then(response => {
-        console.log(response.data.result.access_token.access_token);
-        console.log(response);
+        console.log(response.data.result.access_token.expires_at);
         localStorage.setItem('jwt', response.data.result.access_token.access_token);
         localStorage.setItem('jwt_expiration', response.data.result.access_token.expires_at);
         setPassword('');

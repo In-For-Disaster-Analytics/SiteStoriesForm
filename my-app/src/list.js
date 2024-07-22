@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {openDB, saveAudioToIndexedDB, getAudioFromIndexedDB} from './db';
 import axios from 'axios';
+import ExpiredTokenModal from './ExpiredTokenModal';
 
 
 
 function List( { updateTrigger }) {
   const [formEntries, setFormEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadFormData = () => {
@@ -90,6 +92,15 @@ function List( { updateTrigger }) {
   
 const handleSubmit = async (entry) => {
     const audioFileId = entry.audioFileId
+    const jwt = localStorage.getItem('jwt');
+    const jwtExpiration = localStorage.getItem('jwt_expiration');
+
+    if (!jwt || new Date(jwtExpiration) < new Date()) {
+      console.log(jwt ,new Date(jwtExpiration) , new Date(), new Date(jwtExpiration) < new Date())
+      setIsModalOpen(true);
+      return;
+    }
+
     setIsLoading(true);
     if(new Date(localStorage.getItem('jwt_expiration'))> Date.now()){
     try {
@@ -117,6 +128,7 @@ const handleSubmit = async (entry) => {
     }else{
        console.log('JWT expired. Please log in again.');
     }
+    
   };
 
   
@@ -144,6 +156,10 @@ const handleSubmit = async (entry) => {
                     Submit to PTDataX
                     </button>
           <button onClick={() => handleDelete(entry.id)}>Delete</button>
+          <ExpiredTokenModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
         </div>
       ))}
     </div>
