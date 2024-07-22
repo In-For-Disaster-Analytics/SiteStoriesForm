@@ -71,7 +71,6 @@ function RegistrationForm() {
 function App() {
   return (
     <div className="App">
-      <HelloWorld />
       <RegistrationForm />
     </div>
   );

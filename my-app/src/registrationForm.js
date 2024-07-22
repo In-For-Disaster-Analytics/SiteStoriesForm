@@ -9,7 +9,7 @@ import {openDB, saveAudioToIndexedDB, getAudioFromIndexedDB} from './db';
 function RegistrationForm({onSubmitSuccess}) {
     const [name, setName] = useState('');
     const [title, setTitle] = useState('');
-      const [description, setDescription] = useState('');
+    const [description, setDescription] = useState('');
   
     const [time, setTime] = useState('');
     const [location, setLocation] = useState('');

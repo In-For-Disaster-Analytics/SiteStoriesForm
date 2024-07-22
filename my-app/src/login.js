@@ -21,6 +21,7 @@ const Login = () => {
         console.log(response.data.result.access_token.access_token);
         console.log(response);
         localStorage.setItem('jwt', response.data.result.access_token.access_token);
+        localStorage.setItem('jwt_expiration', response.data.result.access_token.expires_at);
         setPassword('');
         setUsername('');    
         
@@ -36,7 +37,7 @@ const Login = () => {
 };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="login-form">
       <input
         type="text"
         value={username}

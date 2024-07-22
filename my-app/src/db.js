@@ -17,7 +17,7 @@ const openDB = () => {
     const db = await openDB();
     const transaction = db.transaction(storeName, 'readwrite');
     const store = transaction.objectStore(storeName);
-    const id = Date.now();
+    const id = title+Date.now();
     await store.put({ id, title, audioFile });
     return id;
   };

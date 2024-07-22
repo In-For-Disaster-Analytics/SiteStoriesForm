@@ -127,3 +127,30 @@
 .delete-btn:hover {
   background-color: #c82333;
 }
+
+.tab-container {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.tab.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab:hover {
+  background-color: #e0e0e0;
+}
+
+.tab.active:hover {
+  background-color: #0056b3;
+}
