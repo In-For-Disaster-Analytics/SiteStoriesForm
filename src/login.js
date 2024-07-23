@@ -31,8 +31,9 @@ const Login = () => {
       // Handle login error
     } finally {
       // Clear form fields
-      console.log(response)
+      
     }
+    response
     
 };
 
