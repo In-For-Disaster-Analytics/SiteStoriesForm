@@ -25,30 +25,66 @@ function List( { updateTrigger }) {
     };
   }, [updateTrigger]);
 
-  const uploadAudioToTapis = async (audioFile, fileName) => {
+  // const uploadAudioToTapis = async (audioURL, fileName) => {
+  //   const jwt = localStorage.getItem('jwt');
+  //   if (!jwt) {
+  //     console.error('No JWT found. Please log in.');
+  //     return;
+  //   }
+  
+  //   const formData = new FormData();
+  //   console.log(audioURL)
+  //   formData.append('file', audioURL);
+  
+  //   try {
+  //     const response = await axios.post(
+  //       'https://tacc.tapis.io/v3/files/ops/ls6.wmobley//corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/' +fileName.id +".mp3",
+  //       formData,
+  //       {
+  //         headers: {
+  //           'X-Tapis-Token': jwt,
+  //           'Content-Type': 'multipart/form-data'
+  //         }
+  //       }
+  //     );
+  //     console.log('File uploaded successfully:', response.data);
+  //   } catch (error) {
+  //     console.error('Error uploading file:', error);
+  //   }
+  // };
+  const uploadAudioToTapis = async (audioUrl, fileName) => {
     const jwt = localStorage.getItem('jwt');
     if (!jwt) {
       console.error('No JWT found. Please log in.');
       return;
     }
-  
-    const formData = new FormData();
-    formData.append('file', audioFile);
+    console.log(fileName.id, audioUrl)
+    const body = {
+      tag: "Audio file upload",
+      elements: [
+        {
+          sourceURI: audioUrl,
+          destinationURI: `tapis://ls6.wmobley/corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/${fileName.id}.mp3`
+        }
+      ]
+    };
   
     try {
       const response = await axios.post(
-        'https://tacc.tapis.io/v3/files/ops/ls6.wmobley//corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/' +fileName.id +".mp3",
-        formData,
+        'https://tacc.tapis.io/v3/files/transfers',
+        body,
         {
           headers: {
             'X-Tapis-Token': jwt,
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'application/json'
           }
         }
       );
-      console.log('File uploaded successfully:', response.data);
+      console.log('File transfer initiated:', response.data);
+      return response.data;
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error initiating file transfer:', error);
+      throw error;
     }
   };
 
@@ -57,7 +93,7 @@ function List( { updateTrigger }) {
     const feature = {
       attributes: {
         description: formData.description,
-        interviewer: "Test",
+        interviewer: localStorage.getItem('username'),
         time_: new Date(formData.time).getTime(),
         audiofile: formData.audioFileId + '.mp3',
         notes: formData.notes,
@@ -72,7 +108,7 @@ function List( { updateTrigger }) {
         "y": formData.location[0]
       }
     };
-  
+    console.log(feature)
     const params = new URLSearchParams({
       features: JSON.stringify([feature]),
       f: 'json'
@@ -90,6 +126,13 @@ function List( { updateTrigger }) {
     }
   };
   
+  const playAudio = (audioUrl) => {
+    const audio = new Audio(audioUrl);
+    audio.play()
+      .then(() => console.log('Audio playback started'))
+      .catch(error => console.error('Error playing audio:', error));
+  };
+
 const handleSubmit = async (entry) => {
     const audioFileId = entry.audioFileId
     const jwt = localStorage.getItem('jwt');
@@ -105,10 +148,10 @@ const handleSubmit = async (entry) => {
     if(new Date(localStorage.getItem('jwt_expiration'))> Date.now()){
     try {
       const audioData = await getAudioFromIndexedDB(audioFileId);
+      console.log('Audio data retrieved from IndexedDB:', audioData);
+
       if (audioData && audioData.result.audioFile) {
         const audioUrl = URL.createObjectURL(audioData.result.audioFile);
-        console.log('Audio source URI:', audioUrl);
-        console.log(audioData.result.title)
         uploadAudioToTapis(audioUrl, audioData.result);
         // You can now use this audioUrl to play the audio or for further processing
       } else {
@@ -120,9 +163,9 @@ const handleSubmit = async (entry) => {
       setIsLoading(false);
       submitToArcGIS(entry);
       // Remove the submitted entry from the list
-    const updatedEntries = formEntries.filter(item => item.id !== entry.id);
-    setFormEntries(updatedEntries);
-    localStorage.setItem('siteStoryFormData', JSON.stringify(updatedEntries));
+    // const updatedEntries = formEntries.filter(item => item.id !== entry.id);
+    // setFormEntries(updatedEntries);
+    // localStorage.setItem('siteStoryFormData', JSON.stringify(updatedEntries));
 
     }
     }else{

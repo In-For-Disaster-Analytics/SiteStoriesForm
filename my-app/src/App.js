@@ -5,27 +5,6 @@ import List from './list';
 import Header from './Header';
 import './App.css';
 
-
-// function App() {
-//   const [updateTrigger, setUpdateTrigger] = useState(0);
-
-//   const triggerUpdate = () => {
-//     setUpdateTrigger(prev => prev + 1);
-//   };
-//   return (
-//     <div className="App">
-//      <Header/>
-//       <RegistrationForm onSubmitSuccess={triggerUpdate}/>
-//       <List updateTrigger={updateTrigger}/>
-
-//     </div>
-//   );
-// }
-
-// export default App;
-
-
-
 function App() {
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const [activeTab, setActiveTab] = useState('form');
