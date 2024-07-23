@@ -3,6 +3,9 @@
     "axios": "^1.7.2"
   },
   "scripts": {
-  "build": "react-scripts build"
-}
+    "build": "react-scripts build"
+  },
+  "devDependencies": {
+    "react-scripts": "^5.0.1"
+  }
 }
