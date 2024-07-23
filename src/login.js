@@ -5,11 +5,11 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   // const[JWT, setJWT] = useState('');
-  
+  const response = Null
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://tacc.tapis.io/v3/oauth2/tokens', {
+      response = await axios.post('https://tacc.tapis.io/v3/oauth2/tokens', {
         username,
         password,
         grant_type: 'password'
@@ -29,11 +29,12 @@ const Login = () => {
     } catch (error) {
       console.error('Login failed:', error);
       // Handle login error
+
     } finally {
       // Clear form fields
       
     }
-    response
+    
     
 };
 

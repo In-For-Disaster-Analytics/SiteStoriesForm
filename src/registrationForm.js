@@ -15,8 +15,8 @@ function RegistrationForm({onSubmitSuccess}) {
     const [location, setLocation] = useState('');
     const [audioFile, setAudioFile] = useState(null);
     const [notes, setNotes] = useState('');
-    
-const audioSync async (formData) => {
+    const saveFormDataToFile = Null;
+saveFormDataToFile = async (formData) => {
   try {
     const handle = await window.showSaveFilePicker({
       suggestedName: `${formData.title}.mp3`,
@@ -34,7 +34,6 @@ const audioSync async (formData) => {
     console.error('Error saving file:', err);
   }
 };
-audioSync
 
 
     const handleAudioFileChange = (e) => {
