@@ -4,7 +4,7 @@ import axios from 'axios';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const[JWT, setJWT] = useState('');
+  // const[JWT, setJWT] = useState('');
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ const Login = () => {
       // Handle login error
     } finally {
       // Clear form fields
-      
+      console.log(response)
     }
     
 };

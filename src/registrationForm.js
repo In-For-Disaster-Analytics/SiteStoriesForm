@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import Location from './location';
-import {openDB, saveAudioToIndexedDB, getAudioFromIndexedDB} from './db';
+import { saveAudioToIndexedDB, getAudioFromIndexedDB} from './db';
 
 
 
@@ -16,7 +16,7 @@ function RegistrationForm({onSubmitSuccess}) {
     const [audioFile, setAudioFile] = useState(null);
     const [notes, setNotes] = useState('');
     
-const saveFormDataToFile = async (formData) => {
+ async (formData) => {
   try {
     const handle = await window.showSaveFilePicker({
       suggestedName: `${formData.title}.mp3`,

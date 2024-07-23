@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {openDB, saveAudioToIndexedDB, getAudioFromIndexedDB} from './db';
+import { getAudioFromIndexedDB} from './db';
 import axios from 'axios';
 import ExpiredTokenModal from './ExpiredTokenModal';
 
@@ -9,7 +9,7 @@ function List( { updateTrigger }) {
   const [formEntries, setFormEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  console.log(isLoading)
   useEffect(() => {
     const loadFormData = () => {
       const data = JSON.parse(localStorage.getItem('siteStoryFormData')) || [];
@@ -126,12 +126,12 @@ function List( { updateTrigger }) {
     }
   };
   
-  const playAudio = (audioUrl) => {
-    const audio = new Audio(audioUrl);
-    audio.play()
-      .then(() => console.log('Audio playback started'))
-      .catch(error => console.error('Error playing audio:', error));
-  };
+  // const playAudio = (audioUrl) => {
+  //   const audio = new Audio(audioUrl);
+  //   audio.play()
+  //     .then(() => console.log('Audio playback started'))
+  //     .catch(error => console.error('Error playing audio:', error));
+  // };
 
 const handleSubmit = async (entry) => {
     const audioFileId = entry.audioFileId
