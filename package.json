@@ -41,7 +41,7 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "in-for-disaster-analytics.github.io/SiteStoriesForm/",
+  "homepage": "/SiteStoriesForm",
   "devDependencies": {
     "gh-pages": "^6.1.1"
   }
