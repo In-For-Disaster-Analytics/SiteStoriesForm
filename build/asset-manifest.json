@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/css/main.ab9e505c.css",
+    "main.js": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/js/main.15dfe86f.js",
+    "static/js/453.ed3810f9.chunk.js": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/js/453.ed3810f9.chunk.js",
+    "index.html": "/in-for-disaster-analytics.github.io/SiteStoriesForm/index.html",
+    "main.ab9e505c.css.map": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/css/main.ab9e505c.css.map",
+    "main.15dfe86f.js.map": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/js/main.15dfe86f.js.map",
+    "453.ed3810f9.chunk.js.map": "/in-for-disaster-analytics.github.io/SiteStoriesForm/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ab9e505c.css",
+    "static/js/main.15dfe86f.js"
+  ]
+}
