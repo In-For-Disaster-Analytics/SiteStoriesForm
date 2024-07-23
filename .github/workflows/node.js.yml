@@ -22,8 +22,11 @@ jobs:
       run: npm install
     - name: Install react-scripts
       run: npm install react-scripts --save-dev
-    - name: Build application
-      run: npm run build
+    - name: Install dependencies and build
+      run: |
+        cd my-app
+        npm install
+        npm run build
 
     - name: Deploy to production branch
       run: |
