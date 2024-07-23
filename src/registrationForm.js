@@ -15,7 +15,7 @@ function RegistrationForm({onSubmitSuccess}) {
     const [location, setLocation] = useState('');
     const [audioFile, setAudioFile] = useState(null);
     const [notes, setNotes] = useState('');
-    const saveFormDataToFile = Null;
+    const saveFormDataToFile =null;
 saveFormDataToFile = async (formData) => {
   try {
     const handle = await window.showSaveFilePicker({
