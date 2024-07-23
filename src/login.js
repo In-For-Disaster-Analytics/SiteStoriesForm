@@ -5,7 +5,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   // const[JWT, setJWT] = useState('');
-  const response = null
+  let response = null;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
