@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/SiteStoriesForm/static/css/main.ab9e505c.css",
+    "main.js": "/SiteStoriesForm/static/js/main.e4b880a9.js",
+    "static/js/453.ed3810f9.chunk.js": "/SiteStoriesForm/static/js/453.ed3810f9.chunk.js",
+    "index.html": "/SiteStoriesForm/index.html",
+    "main.ab9e505c.css.map": "/SiteStoriesForm/static/css/main.ab9e505c.css.map",
+    "main.e4b880a9.js.map": "/SiteStoriesForm/static/js/main.e4b880a9.js.map",
+    "453.ed3810f9.chunk.js.map": "/SiteStoriesForm/static/js/453.ed3810f9.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ab9e505c.css",
+    "static/js/main.e4b880a9.js"
+  ]
+}
