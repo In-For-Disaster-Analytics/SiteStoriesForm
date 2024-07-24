@@ -15,25 +15,26 @@ function RegistrationForm({onSubmitSuccess}) {
     const [location, setLocation] = useState('');
     const [audioFile, setAudioFile] = useState(null);
     const [notes, setNotes] = useState('');
-    const saveFormDataToFile =null;
-saveFormDataToFile = async (formData) => {
-  try {
-    const handle = await window.showSaveFilePicker({
-      suggestedName: `${formData.title}.mp3`,
-      types: [{
-        description: 'MP3 Audio',
-        accept: {'audio/mpeg': ['.mp3']},
-      }],
-    });
-    const writable = await handle.createWritable();
-    await writable.write(formData.audioFile);
-    await writable.close();
-    console.log(handle);
-    console.log('File saved successfully');
-  } catch (err) {
-    console.error('Error saving file:', err);
-  }
-};
+    let saveFormDataToFile =null;
+      
+  saveFormDataToFile = async (formData) => {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: `${formData.title}.mp3`,
+        types: [{
+          description: 'MP3 Audio',
+          accept: {'audio/mpeg': ['.mp3']},
+        }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(formData.audioFile);
+      await writable.close();
+      console.log(handle);
+      console.log('File saved successfully');
+    } catch (err) {
+      console.error('Error saving file:', err);
+    }
+  };
 
 
     const handleAudioFileChange = (e) => {

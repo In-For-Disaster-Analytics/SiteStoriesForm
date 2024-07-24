@@ -52,41 +52,41 @@ function List( { updateTrigger }) {
   //     console.error('Error uploading file:', error);
   //   }
   // };
-  const uploadAudioToTapis = async (audioUrl, fileName) => {
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) {
-      console.error('No JWT found. Please log in.');
-      return;
-    }
-    console.log(fileName.id, audioUrl)
-    const body = {
-      tag: "Audio file upload",
-      elements: [
-        {
-          sourceURI: audioUrl,
-          destinationURI: `tapis://ls6.wmobley/corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/${fileName.id}.mp3`
-        }
-      ]
-    };
+  // const uploadAudioToTapis = async (audioUrl, fileName) => {
+  //   const jwt = localStorage.getItem('jwt');
+  //   if (!jwt) {
+  //     console.error('No JWT found. Please log in.');
+  //     return;
+  //   }
+  //   console.log(fileName.id, audioUrl)
+  //   const body = {
+  //     tag: "Audio file upload",
+  //     elements: [
+  //       {
+  //         sourceURI: audioUrl,
+  //         destinationURI: `tapis://ls6.wmobley/corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/${fileName.id}.mp3`
+  //       }
+  //     ]
+  //   };
   
-    try {
-      const response = await axios.post(
-        'https://tacc.tapis.io/v3/files/transfers',
-        body,
-        {
-          headers: {
-            'X-Tapis-Token': jwt,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      console.log('File transfer initiated:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error initiating file transfer:', error);
-      throw error;
-    }
-  };
+  //   try {
+  //     const response = await axios.post(
+  //       'https://tacc.tapis.io/v3/files/transfers',
+  //       body,
+  //       {
+  //         headers: {
+  //           'X-Tapis-Token': jwt,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     );
+  //     console.log('File transfer initiated:', response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error initiating file transfer:', error);
+  //     throw error;
+  //   }
+  // };
 
   const submitToArcGIS = async (formData) => {
     const arcgisUrl = 'https://sitestories.io/arcgis/rest/services/Hosted/Narratives/FeatureServer/0/addFeatures';
@@ -133,6 +133,24 @@ function List( { updateTrigger }) {
   //     .catch(error => console.error('Error playing audio:', error));
   // };
 
+  const saveAudioLocally = async (audioURL, fileName) => {
+    try {
+      const response = await fetch(audioURL);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${fileName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      console.log('Audio file saved locally');
+    } catch (error) {
+      console.error('Error saving audio file locally:', error);
+    }
+  };
+
 const handleSubmit = async (entry) => {
     const audioFileId = entry.audioFileId
     const jwt = localStorage.getItem('jwt');
@@ -152,7 +170,7 @@ const handleSubmit = async (entry) => {
 
       if (audioData && audioData.result.audioFile) {
         const audioUrl = URL.createObjectURL(audioData.result.audioFile);
-        uploadAudioToTapis(audioUrl, audioData.result);
+        saveAudioLocally(audioUrl, audioData.result.id);
         // You can now use this audioUrl to play the audio or for further processing
       } else {
         console.log('Audio file not found');
@@ -162,11 +180,7 @@ const handleSubmit = async (entry) => {
     } finally {
       setIsLoading(false);
       submitToArcGIS(entry);
-      // Remove the submitted entry from the list
-    // const updatedEntries = formEntries.filter(item => item.id !== entry.id);
-    // setFormEntries(updatedEntries);
-    // localStorage.setItem('siteStoryFormData', JSON.stringify(updatedEntries));
-
+   
     }
     }else{
        console.log('JWT expired. Please log in again.');
