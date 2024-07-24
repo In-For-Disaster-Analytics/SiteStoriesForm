@@ -1,30 +1,124 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+name: CI
 
-name: Node.js CI
-
+# Controls when the action will run. Triggers the workflow on pushes to main or on pull request events
 on:
   push:
-    branches: [ "main" ]
+    branches: [dev, stage, release-*, main]
   pull_request:
-    branches: [ "main" ]
+    branches: ['**']
 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-
+  Client_Side_Unit_Tests:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [ 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install --save-dev gh-pages
-    - run: npm run deploy
+      - uses: actions/checkout@v2
+      - name: Setup Node.js for use with actions
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: npm ci
+        run: |
+          npm ci
+      - name: Client Side Unit Tests
+        run: |
+          npm run test
+
+  #    - name: Upload coverage to Codecov
+  #      run: bash <(curl -s https://codecov.io/bash) -Z -t ${{ secrets.CODECOV_TOKEN }} -cF javascript
+
+  Client_Side_Linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js for use with actions
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: npm ci
+        run: |
+          npm ci
+      - name: Client Side Linting
+        run: |
+          npm run lint
+
+  Resolve_Image_Tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.set_image_tag.outputs.image_tag }}
+    steps:
+      - name: Extract_Branch_Name
+        # Map a step output to a job output
+        shell: bash
+        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Check_Is_Production_Release
+        id: check_is_production_release
+        shell: bash
+        run: |
+          if [ "${{ contains(steps.extract_branch.outputs.branch_name, 'release-') }}" = true ]; then
+            echo "is_production_release=true" >> $GITHUB_OUTPUT;
+          else
+            echo "is_production_release=false" >> $GITHUB_OUTPUT;
+          fi
+          echo $GITHUB_OUTPUT
+      - name: Extract Production Release Version
+        if: steps.check_is_production_release.outputs.branch_name == true
+        shell: bash
+        run: echo version=$(echo ${{ steps.extract_branch.outputs.branch_name }} | sed -e 's!release-!!') >> $GITHUB_OUTPUT
+        id: extract_version
+      - name: Extract_Image_Tag
+        shell: bash
+        run: |
+          if [ "${{ steps.check_is_production_release.outputs.is_production_release }}" == true ]; then
+            echo "image_tag=${{ steps.extract_version.outputs.version }}" >> $GITHUB_OUTPUT;
+          else
+            echo "image_tag=${{ steps.extract_branch.outputs.branch_name }}" >> $GITHUB_OUTPUT;
+          fi
+        id: set_image_tag
+
+  Publish_Github_Pages:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs:
+      - Resolve_Image_Tag
+      - Client_Side_Linting
+      - Client_Side_Unit_Tests
+    runs-on: ubuntu-latest
+    name: Publish_Github_Pages
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js for use with actions
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      - name: npm ci
+        run: |
+          npm ci
+      - name: Build_Github_Pages
+        run: |
+          npm run build
+      - name: Deploy_Github_Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
