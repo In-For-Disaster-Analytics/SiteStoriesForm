@@ -86,7 +86,16 @@
 .registration-form button:hover {
   background-color: #45a049;
 }
-
+.form-entries-list {
+  text-align: left;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.button-container {
+  text-align: center;
+  margin-top: 10px;
+}
 .metadata-card {
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
@@ -95,6 +104,9 @@
   margin-bottom: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .metadata-card:hover {
@@ -106,14 +118,24 @@
   margin-top: 0;
   margin-bottom: 8px;
   color: #343a40;
+  font-size: 1.2em;
+  margin-bottom: 10px;
 }
 
 .metadata-card p {
-  margin: 0;
+  margin: 5px 0;
   color: #6c757d;
 }
-
-
+.metadata-card strong {
+  font-weight: 600;
+}
+.submitted-entries-header {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  padding: 0 16px;
+}
 .delete-btn {
   background-color: #dc3545;
   color: white;
@@ -153,4 +175,18 @@
 
 .tab.active:hover {
   background-color: #0056b3;
+}
+
+.location-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.location-input-container input {
+  flex-grow: 1;
+}
+
+.location-input-container button {
+  flex-shrink: 0;
 }

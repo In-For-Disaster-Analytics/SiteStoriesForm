@@ -198,7 +198,8 @@ const handleSubmit = async (entry) => {
 
   return (
     <div className="form-entries-list">
-      <h2>Submitted Entries</h2>
+      <h2 className="submitted-entries-header">Submitted Entries</h2>
+
       {formEntries.map((entry) => (
         <div key={entry.id} className="metadata-card">
           <h3>{entry.title}</h3>
@@ -208,11 +209,12 @@ const handleSubmit = async (entry) => {
           <p><strong>Location:</strong> {entry.location}</p>
           <p><strong>Audio File:</strong> {entry.audioFileId +".mp3" || 'No file uploaded'}</p>
           <p><strong>Notes:</strong> {entry.notes}</p>
-          
+          <div className="button-container">
                     <button onClick={() => handleSubmit(entry)}>
                     Submit to PTDataX
                     </button>
           <button onClick={() => handleDelete(entry.id)}>Delete</button>
+          </div>
           <ExpiredTokenModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 

@@ -65,7 +65,7 @@ function Location({ onLocationChange }) {
   return (
     <div>
       <label htmlFor="location">Location:</label>
-      <div>
+      <div className="location-input-container">
         <input
           type="text"
           value={address}
