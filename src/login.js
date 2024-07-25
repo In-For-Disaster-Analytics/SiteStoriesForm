@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import ConfirmationModal from './confirmationModal';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+
+
   // const[JWT, setJWT] = useState('');
   let response = null;
   const handleSubmit = async (e) => {
@@ -17,28 +21,29 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(response => {
-        console.log(response.data.result.access_token.expires_at);
-        localStorage.setItem('jwt', response.data.result.access_token.access_token);
-        localStorage.setItem('jwt_expiration', response.data.result.access_token.expires_at);
-        localStorage.setItem('userName', username);
-        setPassword('');
-        setUsername('');    
-        
       });
+      
+      localStorage.setItem('jwt', response.data.result.access_token.access_token);
+      localStorage.setItem('jwt_expiration', response.data.result.access_token.expires_at);
+      localStorage.setItem('userName', username);
+      setPassword('');
+      setUsername('');
+      
+      // Show the confirmation modal
+      setShowConfirmationModal(true);
+      
     } catch (error) {
       console.error('Login failed:', error);
       // Handle login error
-
-    } finally {
-      // Clear form fields
-      
     }
+  };
     
+
     
-};
+  
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="login-form">
       <input
         type="text"
@@ -56,6 +61,11 @@ const Login = () => {
       />
       <button type="submit">Login</button>
     </form>
+    <ConfirmationModal 
+      isOpen={showConfirmationModal} 
+      onClose={() => setShowConfirmationModal(false)} 
+    />
+  </>
   );
 };
 

@@ -1,27 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { getAudioFromIndexedDB} from './db';
-import axios from 'axios';
-import ExpiredTokenModal from './ExpiredTokenModal';
+import React, { useState, useEffect } from "react";
+import { getAudioFromIndexedDB } from "./db";
+// import axios from 'axios';
+import ExpiredTokenModal from "./ExpiredTokenModal";
 
-
-
-function List( { updateTrigger }) {
+function List({ updateTrigger }) {
   const [formEntries, setFormEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(isLoading)
+  console.log(isLoading);
   useEffect(() => {
     const loadFormData = () => {
-      const data = JSON.parse(localStorage.getItem('siteStoryFormData')) || [];
-    
+      const data = JSON.parse(localStorage.getItem("siteStoryFormData")) || [];
+
       setFormEntries(data);
     };
 
     loadFormData();
-    window.addEventListener('storage', loadFormData);
+    window.addEventListener("storage", loadFormData);
 
     return () => {
-      window.removeEventListener('storage', loadFormData);
+      window.removeEventListener("storage", loadFormData);
     };
   }, [updateTrigger]);
 
@@ -31,11 +29,11 @@ function List( { updateTrigger }) {
   //     console.error('No JWT found. Please log in.');
   //     return;
   //   }
-  
+
   //   const formData = new FormData();
   //   console.log(audioURL)
   //   formData.append('file', audioURL);
-  
+
   //   try {
   //     const response = await axios.post(
   //       'https://tacc.tapis.io/v3/files/ops/ls6.wmobley//corral-repl/tacc/aci/PT2050/projects/PT2050-138/Interviews/' +fileName.id +".mp3",
@@ -68,7 +66,7 @@ function List( { updateTrigger }) {
   //       }
   //     ]
   //   };
-  
+
   //   try {
   //     const response = await axios.post(
   //       'https://tacc.tapis.io/v3/files/transfers',
@@ -89,43 +87,45 @@ function List( { updateTrigger }) {
   // };
 
   const submitToArcGIS = async (formData) => {
-    const arcgisUrl = 'https://sitestories.io/arcgis/rest/services/Hosted/Narratives/FeatureServer/0/addFeatures';
+    const arcgisUrl =
+      "https://sitestories.io/arcgis/rest/services/Hosted/Narratives/FeatureServer/0/addFeatures";
     const feature = {
       attributes: {
         description: formData.description,
-        interviewer: localStorage.getItem('username'),
+        interviewer: localStorage.getItem("username"),
         time_: new Date(formData.time).getTime(),
-        audiofile: formData.audioFileId + '.mp3',
+        audiofile: formData.audioFileId + ".mp3",
         notes: formData.notes,
         esrignss_latitude: formData.location[1],
-        esrignss_longitude: formData.location[0]
+        esrignss_longitude: formData.location[0],
       },
-      "geometry": {
-        spatialReference: {
-            wkid: 4326
-          },
-        "x": formData.location[1],
-        "y": formData.location[0]
-      }
+      // geometry: {
+      //   x: formData.location[1],
+      //   y: formData.location[0],
+      //   spatialReference: {
+      //     wkid: 4326,
+      //   },
+        
+      // },
     };
-    console.log(feature)
+    console.log(feature);
     const params = new URLSearchParams({
       features: JSON.stringify([feature]),
-      f: 'json'
+      f: "json",
     });
-  
+
     try {
       const response = await fetch(arcgisUrl, {
-        method: 'POST',
-        body: params
+        method: "POST",
+        body: params,
       });
       const result = await response.json();
-      console.log('ArcGIS submission result:', result.addResults[0]);
+      console.log("ArcGIS submission result:", result.addResults[0]);
     } catch (error) {
-      console.error('Error submitting to ArcGIS:', error);
+      console.error("Error submitting to ArcGIS:", error);
     }
   };
-  
+
   // const playAudio = (audioUrl) => {
   //   const audio = new Audio(audioUrl);
   //   audio.play()
@@ -138,62 +138,63 @@ function List( { updateTrigger }) {
       const response = await fetch(audioURL);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
+      const a = document.createElement("a");
+      a.style.display = "none";
       a.href = url;
       a.download = `${fileName}.mp3`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      console.log('Audio file saved locally');
+      console.log("Audio file saved locally");
     } catch (error) {
-      console.error('Error saving audio file locally:', error);
+      console.error("Error saving audio file locally:", error);
     }
   };
 
-const handleSubmit = async (entry) => {
-    const audioFileId = entry.audioFileId
-    const jwt = localStorage.getItem('jwt');
-    const jwtExpiration = localStorage.getItem('jwt_expiration');
+  const handleSubmit = async (entry) => {
+    const audioFileId = entry.audioFileId;
+    const jwt = localStorage.getItem("jwt");
+    const jwtExpiration = localStorage.getItem("jwt_expiration");
 
     if (!jwt || new Date(jwtExpiration) < new Date()) {
-      console.log(jwt ,new Date(jwtExpiration) , new Date(), new Date(jwtExpiration) < new Date())
+      console.log(
+        jwt,
+        new Date(jwtExpiration),
+        new Date(),
+        new Date(jwtExpiration) < new Date()
+      );
       setIsModalOpen(true);
       return;
     }
 
     setIsLoading(true);
-    if(new Date(localStorage.getItem('jwt_expiration'))> Date.now()){
-    try {
-      const audioData = await getAudioFromIndexedDB(audioFileId);
-      console.log('Audio data retrieved from IndexedDB:', audioData);
+    if (new Date(localStorage.getItem("jwt_expiration")) > Date.now()) {
+      try {
+        const audioData = await getAudioFromIndexedDB(audioFileId);
+        console.log("Audio data retrieved from IndexedDB:", audioData);
 
-      if (audioData && audioData.result.audioFile) {
-        const audioUrl = URL.createObjectURL(audioData.result.audioFile);
-        saveAudioLocally(audioUrl, audioData.result.id);
-        // You can now use this audioUrl to play the audio or for further processing
-      } else {
-        console.log('Audio file not found');
+        if (audioData && audioData.result.audioFile) {
+          const audioUrl = URL.createObjectURL(audioData.result.audioFile);
+          saveAudioLocally(audioUrl, audioData.result.id);
+          // You can now use this audioUrl to play the audio or for further processing
+        } else {
+          console.log("Audio file not found");
+        }
+      } catch (error) {
+        console.error("Error loading audio:", error);
+      } finally {
+        setIsLoading(false);
+        submitToArcGIS(entry);
       }
-    } catch (error) {
-      console.error('Error loading audio:', error);
-    } finally {
-      setIsLoading(false);
-      submitToArcGIS(entry);
-   
+    } else {
+      console.log("JWT expired. Please log in again.");
     }
-    }else{
-       console.log('JWT expired. Please log in again.');
-    }
-    
   };
 
-  
-  
   const handleDelete = (id) => {
-    const updatedEntries = formEntries.filter(entry => entry.id !== id);
+    const updatedEntries = formEntries.filter((entry) => entry.id !== id);
     setFormEntries(updatedEntries);
-    localStorage.setItem('siteStoryFormData', JSON.stringify(updatedEntries));
+    localStorage.setItem("siteStoryFormData", JSON.stringify(updatedEntries));
   };
 
   return (
@@ -203,22 +204,35 @@ const handleSubmit = async (entry) => {
       {formEntries.map((entry) => (
         <div key={entry.id} className="metadata-card">
           <h3>{entry.title}</h3>
-          <p><strong>Description:</strong> {entry.description}</p>
-          <p><strong>Interviewer:</strong> {entry.name}</p>
-          <p><strong>Time:</strong> {new Date(entry.time).toLocaleString()}</p>
-          <p><strong>Location:</strong> {entry.location}</p>
-          <p><strong>Audio File:</strong> {entry.audioFileId +".mp3" || 'No file uploaded'}</p>
-          <p><strong>Notes:</strong> {entry.notes}</p>
+          <p>
+            <strong>Description:</strong> {entry.description}
+          </p>
+          <p>
+            <strong>Interviewer:</strong> {entry.name}
+          </p>
+          <p>
+            <strong>Time:</strong> {new Date(entry.time).toLocaleString()}
+          </p>
+          <p>
+            <strong>Location:</strong> {entry.location}
+          </p>
+          <p>
+            <strong>Audio File:</strong>{" "}
+            {entry.audioFileId + ".mp3" || "No file uploaded"}
+          </p>
+          <p>
+            <strong>Notes:</strong> {entry.notes}
+          </p>
           <div className="button-container">
-                    <button onClick={() => handleSubmit(entry)}>
-                    Submit to PTDataX
-                    </button>
-          <button onClick={() => handleDelete(entry.id)}>Delete</button>
+            <button onClick={() => handleSubmit(entry)}>
+              Submit to PTDataX
+            </button>
+            <button onClick={() => handleDelete(entry.id)}>Delete</button>
           </div>
-          <ExpiredTokenModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
+          <ExpiredTokenModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
         </div>
       ))}
     </div>
