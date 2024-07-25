@@ -185,6 +185,7 @@ function List({ updateTrigger }) {
       } finally {
         setIsLoading(false);
         submitToArcGIS(entry);
+        handleDelete(entry.id);
       }
     } else {
       console.log("JWT expired. Please log in again.");
