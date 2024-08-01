@@ -15,12 +15,16 @@ function RegistrationForm({ onSubmitSuccess }) {
 
   saveFormDataToFile = async (formData) => {
     try {
+      const fileExtension = formData.audioFile.name.split('.').pop().toLowerCase();
       const handle = await window.showSaveFilePicker({
-        suggestedName: `${formData.title}.mp3`,
+        suggestedName: `${formData.title}.${fileExtension}`,
         types: [
           {
-            description: "MP3 Audio",
-            accept: { "audio/mpeg": [".mp3"] },
+            description: " Audio Files",
+            accept: { "audio/mpeg": [".mp3"],
+            "audio/x-m4a": [".m4a"]
+
+             },
           },
         ],
       });
@@ -36,9 +40,12 @@ function RegistrationForm({ onSubmitSuccess }) {
 
   const handleAudioFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
+    if (file && (file.type === "audio/mpeg" || file.type === "audio/x-m4a")) {
       console.log(file);
-      setAudioFile(file.name ? file : null);
+      setAudioFile(file);
+    } else {
+      console.log("Invalid file type. Please select an MP3 or M4A file.");
+      setAudioFile(null);
     }
   };
   const handleSubmit = async (e) => {
@@ -164,7 +171,7 @@ function RegistrationForm({ onSubmitSuccess }) {
         <input
           type="file"
           id="audio"
-          accept=".mp3"
+          accept=".mp3,.m4a"
           onChange={handleAudioFileChange}
           required
         />

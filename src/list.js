@@ -94,7 +94,7 @@ function List({ updateTrigger }) {
         description: formData.description,
         interviewer: localStorage.getItem("username"),
         time_: new Date(formData.time).getTime(),
-        audiofile: formData.audioFileId + ".mp3",
+        audiofile: formData.audioFileId + (formData.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3'),
         notes: formData.notes,
         esrignss_latitude: formData.location[1],
         esrignss_longitude: formData.location[0],
@@ -133,7 +133,7 @@ function List({ updateTrigger }) {
   //     .catch(error => console.error('Error playing audio:', error));
   // };
 
-  const saveAudioLocally = async (audioURL, fileName) => {
+  const saveAudioLocally = async (audioURL, fileName, fileType) => {
     try {
       const response = await fetch(audioURL);
       const blob = await response.blob();
@@ -141,7 +141,7 @@ function List({ updateTrigger }) {
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = `${fileName}.mp3`;
+      a.download = `${fileName}.${fileType === 'audio/x-m4a' ? 'm4a' : 'mp3'}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -175,7 +175,7 @@ function List({ updateTrigger }) {
 
         if (audioData && audioData.result.audioFile) {
           const audioUrl = URL.createObjectURL(audioData.result.audioFile);
-          saveAudioLocally(audioUrl, audioData.result.id);
+          saveAudioLocally(audioUrl, audioData.result.id, audioData.result.audioFile.type);
           // You can now use this audioUrl to play the audio or for further processing
         } else {
           console.log("Audio file not found");
@@ -218,9 +218,10 @@ function List({ updateTrigger }) {
             <strong>Location:</strong> {entry.location}
           </p>
           <p>
-            <strong>Audio File:</strong>{" "}
-            {entry.audioFileId + ".mp3" || "No file uploaded"}
-          </p>
+  <strong>Audio File:</strong>{" "}
+  {entry.audioFileId + (entry.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3') || "No file uploaded"}
+</p>
+
           <p>
             <strong>Notes:</strong> {entry.notes}
           </p>
