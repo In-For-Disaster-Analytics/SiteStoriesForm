@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/SiteStoriesForm/static/css/main.ef49cce2.css",
-    "main.js": "/SiteStoriesForm/static/js/main.be75e4f1.js",
+    "main.css": "/SiteStoriesForm/static/css/main.57c71420.css",
+    "main.js": "/SiteStoriesForm/static/js/main.41ddce30.js",
     "static/js/453.ed3810f9.chunk.js": "/SiteStoriesForm/static/js/453.ed3810f9.chunk.js",
     "static/media/favicon.png": "/SiteStoriesForm/static/media/favicon.b1ce8b49c13e809424d0.png",
     "index.html": "/SiteStoriesForm/index.html",
-    "main.ef49cce2.css.map": "/SiteStoriesForm/static/css/main.ef49cce2.css.map",
-    "main.be75e4f1.js.map": "/SiteStoriesForm/static/js/main.be75e4f1.js.map",
+    "main.57c71420.css.map": "/SiteStoriesForm/static/css/main.57c71420.css.map",
+    "main.41ddce30.js.map": "/SiteStoriesForm/static/js/main.41ddce30.js.map",
     "453.ed3810f9.chunk.js.map": "/SiteStoriesForm/static/js/453.ed3810f9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ef49cce2.css",
-    "static/js/main.be75e4f1.js"
+    "static/css/main.57c71420.css",
+    "static/js/main.41ddce30.js"
   ]
 }
