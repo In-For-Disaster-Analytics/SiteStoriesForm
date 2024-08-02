@@ -70,6 +70,23 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
 }
+@media (max-width: 768px) {
+  .form-field {
+    display: block;
+  }
+
+  .form-field label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  .input-container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
 .form-field {
   display: flex;
   align-items: center;
@@ -85,7 +102,7 @@
 .input-container {
   flex: 1;
 }
-
+}
 
 
 
