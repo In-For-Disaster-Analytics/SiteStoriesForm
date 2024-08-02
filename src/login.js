@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import ConfirmationModal from './confirmationModal';
 
-const Login = () => {
+const Login = ({onLoginSuccess}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -31,6 +31,8 @@ const Login = () => {
       
       // Show the confirmation modal
       setShowConfirmationModal(true);
+      // Close the login modal
+      onLoginSuccess();
       
     } catch (error) {
       console.error('Login failed:', error);
