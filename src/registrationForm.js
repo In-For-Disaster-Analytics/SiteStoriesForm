@@ -107,10 +107,10 @@ function RegistrationForm({ onSubmitSuccess }) {
   return (
     <form onSubmit={handleSubmit} className="registration-form">
       <div className="tab-container">
-      <button type="button" onClick={() => setActiveTab('audio')} className={`tab-button ${activeTab === 'audio' ? 'active' : ''}`}>
+      <button type="button" onClick={() => setActiveTab('audio')} className={`tab-button file-type-tab ${activeTab === 'audio' ? 'active' : ''}`}>
           Register Audio Narrative
         </button>
-        <button type="button" onClick={() => setActiveTab('image')} className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}>
+        <button type="button" onClick={() => setActiveTab('image')} className={`tab-button file-type-tab ${activeTab === 'image' ? 'active' : ''}`}>
           Register an Image
         </button>
       </div>
