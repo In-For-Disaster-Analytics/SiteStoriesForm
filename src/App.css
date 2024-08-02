@@ -13,6 +13,26 @@
   }
 }
 
+.header-icon {
+  width: 40px; /* Set a fixed width for the icon */
+  height: 40px; /* Set a fixed height for the icon */
+  /* margin-right: 10px; */
+  object-fit: contain; /* This ensures the image maintains its aspect ratio */
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  height: 60px;
+  justify-content: flex-start;
+}
+
+.app-header h1 {
+  margin-right: auto;
+}
+
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
