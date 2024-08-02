@@ -1,70 +1,85 @@
 import React, { useState } from "react";
 import Location from "./location";
-import { saveAudioToIndexedDB, getAudioFromIndexedDB } from "./db";
+import {
+  saveAudioToIndexedDB,
+  getFileFromIndexedDB,
+  saveImageToIndexedDB,
+} from "./db";
+
+const formFields = [
+  { id: "title", label: "Title", type: "text" },
+  { id: "description", label: "Description", type: "textarea" },
+  { id: "name", label: "Interviewer Name", type: "text", required: true },
+  { id: "time", label: "Time", type: "datetime-local", required: true },
+  { id: "location", label: "Location", type: "custom" },
+  {
+    id: "audio",
+    label: "Audio Narrative",
+    type: "file",
+    accept: ".mp3,.m4a",
+    required: true,
+    tab: "audio",
+  },
+  {
+    id: "image",
+    label: "Image",
+    type: "file",
+    accept: "image/jpeg",
+    required: true,
+    tab: "image",
+  },
+  { id: "notes", label: "Notes", type: "textarea" },
+];
 
 function RegistrationForm({ onSubmitSuccess }) {
-  const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-
-  const [time, setTime] = useState("");
-  const [location, setLocation] = useState("");
+  const [formData, setFormData] = useState({});
   const [audioFile, setAudioFile] = useState(null);
-  const [notes, setNotes] = useState("");
-  let saveFormDataToFile = null;
-
-  saveFormDataToFile = async (formData) => {
-    try {
-      const fileExtension = formData.audioFile.name.split('.').pop().toLowerCase();
-      const handle = await window.showSaveFilePicker({
-        suggestedName: `${formData.title}.${fileExtension}`,
-        types: [
-          {
-            description: " Audio Files",
-            accept: { "audio/mpeg": [".mp3"],
-            "audio/x-m4a": [".m4a"]
-
-             },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(formData.audioFile);
-      await writable.close();
-      console.log(handle);
-      console.log("File saved successfully");
-    } catch (err) {
-      console.error("Error saving file:", err);
-    }
+  const [location, setLocation] = useState(null);
+  const [activeTab, setActiveTab] = useState("audio");
+  const [imageFile, setImageFile] = useState(null);
+  const DEFAULT_LAT =60.876549;
+  const DEFAULT_LONG = -162.460444;
+  
+  
+  
+  
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
-  const handleAudioFileChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && (file.type === "audio/mpeg" || file.type === "audio/x-m4a")) {
-      console.log(file);
+    if (
+      activeTab === "audio" &&
+      (file.type === "audio/mpeg" || file.type === "audio/x-m4a")
+    ) {
       setAudioFile(file);
+    } else if (activeTab === "image" && file.type === "image/jpeg") {
+      setImageFile(file);
     } else {
-      console.log("Invalid file type. Please select an MP3 or M4A file.");
-      setAudioFile(null);
+      console.log("Invalid file type.");
     }
+    setFormData((prevData) => ({ ...prevData, fileId: file.name }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const audioFileId = await saveAudioToIndexedDB(audioFile, title);
+      const fileId =
+        activeTab === "audio"
+          ? await saveAudioToIndexedDB(audioFile, formData.title)
+          : await saveImageToIndexedDB(imageFile, formData.title);
 
       const newFormData = {
         id: Date.now(),
-        name,
-        title,
-        description,
-        time,
-        location,
-        audioFileId,
-        notes,
-      };
+        ...formData,
+        location: formData.location || [DEFAULT_LONG, DEFAULT_LAT],
 
+        fileId,
+        fileType: activeTab,
+      };
       // Retrieve existing data
       const existingData =
         JSON.parse(localStorage.getItem("siteStoryFormData")) || [];
@@ -79,7 +94,7 @@ function RegistrationForm({ onSubmitSuccess }) {
       console.log("Total entries:", updatedData.length);
       // Confirm data storage
       try {
-        const storedData = await getAudioFromIndexedDB(audioFileId);
+        const storedData = await getFileFromIndexedDB(fileId);
         console.log("Stored audio data:", storedData);
       } catch (error) {
         console.error("Error retrieving audio data:", error);
@@ -89,105 +104,62 @@ function RegistrationForm({ onSubmitSuccess }) {
       console.error("Error saving form data:", error);
     }
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const newFormData = {
-  //     id: Date.now(),
-  //     name,
-  //     title,
-  //     description,
-  //     time,
-  //     location,
-  //     audioFileName: audioFile ? audioFile.name : null,
-  //     audioFile: audioFile,
-  //     notes
-  //   };
-
-  //   // Retrieve existing data
-  //   const existingData = JSON.parse(localStorage.getItem('siteStoryFormData')) || [];
-
-  //   // Append new data
-  //   const updatedData = [...existingData, newFormData];
-
-  //   // Save updated data back to localStorage
-  //   localStorage.setItem('siteStoryFormData', JSON.stringify(updatedData));
-  //   localStorage.setItem(newFormData.title, audioFile);
-  //   console.log(localStorage)
-  //   // Save file locally
-  //   // await saveFormDataToFile(newFormData);
-  //   console.log('Form data appended to localStorage:', newFormData);
-  //   console.log('Total entries:', updatedData.length);
-
-  //   // Optionally, reset form fields here
-  //   onSubmitSuccess();
-  // };
-
   return (
     <form onSubmit={handleSubmit} className="registration-form">
-      <div className="registration-form">
-        <label htmlFor="Title">Title:</label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        ></input>
+      <div className="tab-container">
+      <button type="button" onClick={() => setActiveTab('audio')} className={`tab-button ${activeTab === 'audio' ? 'active' : ''}`}>
+          Register Audio Narrative
+        </button>
+        <button type="button" onClick={() => setActiveTab('image')} className={`tab-button ${activeTab === 'image' ? 'active' : ''}`}>
+          Register an Image
+        </button>
       </div>
-      <div className="registration-form">
-        <label htmlFor="Description">Description:</label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-      </div>
-      <div className="registration-form">
-        <label htmlFor="name">Interviewer Name:</label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
-      <div className="registration-form">
-        <label htmlFor="time">Time:</label>
-        <input
-          type="datetime-local"
-          id="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          required
-        />
-      </div>
-      <div className="registration-form">
-        <Location onLocationChange={setLocation} />
-      </div>
-      <div className="registration-form">
-        <label htmlFor="audio">Audio Narrative Location:</label>
-        <input
-          type="file"
-          id="audio"
-          accept=".mp3,.m4a"
-          onChange={handleAudioFileChange}
-          required
-        />
-        {audioFile && <p>Selected file: {audioFile.name}</p>}
-      </div>
-      <div className="registration-form">
-        <label htmlFor="notes">Notes:</label>
-        <textarea
-          id="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        ></textarea>
-      </div>
+      <div className={`tab-content ${activeTab}`}>
+      {formFields.map(
+        (field) =>
+          (!field.tab || field.tab === activeTab) && (
+            <div key={field.id} className="registration-form">
+              <label htmlFor={field.id}>{field.label}:</label>
+
+              {field.type === "custom" && field.id === "location" ? (
+                <Location
+                  onLocationChange={(loc) =>
+                    setFormData((prev) => ({ ...prev, location: loc }))
+                  }
+                />
+              ) : field.type === "textarea" ? (
+                <textarea
+                  id={field.id}
+                  value={formData[field.id] || ""}
+                  onChange={handleInputChange}
+                  required={field.required}
+                />
+              ) : field.type === "file" ? (
+                <input
+                  type={field.type}
+                  id={field.id}
+                  accept={field.accept}
+                  onChange={handleFileChange}
+                  required={field.required}
+                />
+              ) : (
+                <input
+                  type={field.type}
+                  id={field.id}
+                  value={formData[field.id] || ""}
+                  onChange={handleInputChange}
+                  required={field.required}
+                />
+              )}
+            </div>
+          )
+      )}
+      
+      {audioFile && <p>Selected file: {audioFile.name}</p>}
       <button type="submit" className="submit-button">
         Register
       </button>
+      </div>
     </form>
   );
 }

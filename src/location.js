@@ -71,7 +71,6 @@ function Location({ onLocationChange }) {
 
   return (
     <div>
-      <label htmlFor="location">Location:</label>
       <div className="location-input-container">
         <input
           type="text"

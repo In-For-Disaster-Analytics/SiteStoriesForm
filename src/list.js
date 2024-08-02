@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAudioFromIndexedDB } from "./db";
+import { getFileFromIndexedDB } from "./db";
 // import axios from 'axios';
 import ExpiredTokenModal from "./ExpiredTokenModal";
 
@@ -7,6 +7,7 @@ function List({ updateTrigger }) {
   const [formEntries, setFormEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   console.log(isLoading);
   useEffect(() => {
     const loadFormData = () => {
@@ -92,9 +93,9 @@ function List({ updateTrigger }) {
     const feature = {
       attributes: {
         description: formData.description,
-        interviewer: localStorage.getItem("username"),
+        interviewer: formData.name,
         time_: new Date(formData.time).getTime(),
-        audiofile: formData.audioFileId + (formData.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3'),
+        audiofile: formData.fileId + (formData.fileType === 'image' ? '.jpg' : (formData.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3')),
         notes: formData.notes,
         esrignss_latitude: formData.location[1],
         esrignss_longitude: formData.location[0],
@@ -133,36 +134,31 @@ function List({ updateTrigger }) {
   //     .catch(error => console.error('Error playing audio:', error));
   // };
 
-  const saveAudioLocally = async (audioURL, fileName, fileType) => {
+  const saveFileLocally = async (fileURL, fileName, fileType) => {
     try {
-      const response = await fetch(audioURL);
+      const response = await fetch(fileURL);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.style.display = "none";
       a.href = url;
-      a.download = `${fileName}.${fileType === 'audio/x-m4a' ? 'm4a' : 'mp3'}`;
+      a.download = `${fileName}.${fileType === 'image' ? 'jpg' : (fileType === 'audio/x-m4a' ? 'm4a' : 'mp3')}`;
+      console.log(`${fileName}.${fileType === 'image' ? 'jpg' : (fileType === 'audio/x-m4a' ? 'm4a' : 'mp3')}`)
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
-      console.log("Audio file saved locally");
+      console.log("File saved locally");
     } catch (error) {
-      console.error("Error saving audio file locally:", error);
+      console.error("Error saving file locally:", error);
     }
   };
 
   const handleSubmit = async (entry) => {
-    const audioFileId = entry.audioFileId;
+    const fileId = entry.fileId;
     const jwt = localStorage.getItem("jwt");
     const jwtExpiration = localStorage.getItem("jwt_expiration");
 
     if (!jwt || new Date(jwtExpiration) < new Date()) {
-      console.log(
-        jwt,
-        new Date(jwtExpiration),
-        new Date(),
-        new Date(jwtExpiration) < new Date()
-      );
       setIsModalOpen(true);
       return;
     }
@@ -170,18 +166,18 @@ function List({ updateTrigger }) {
     setIsLoading(true);
     if (new Date(localStorage.getItem("jwt_expiration")) > Date.now()) {
       try {
-        const audioData = await getAudioFromIndexedDB(audioFileId);
-        console.log("Audio data retrieved from IndexedDB:", audioData);
-
-        if (audioData && audioData.result.audioFile) {
-          const audioUrl = URL.createObjectURL(audioData.result.audioFile);
-          saveAudioLocally(audioUrl, audioData.result.id, audioData.result.audioFile.type);
-          // You can now use this audioUrl to play the audio or for further processing
+        const fileData = await getFileFromIndexedDB(fileId);
+        console.log("File data retrieved from IndexedDB:", fileData);
+      
+        if (fileData && fileData.file) {
+          const fileUrl = URL.createObjectURL(fileData.file);
+          saveFileLocally(fileUrl, fileData.id, entry.fileType);
         } else {
-          console.log("Audio file not found");
+          console.log("File not found or invalid file data");
         }
       } catch (error) {
-        console.error("Error loading audio:", error);
+        console.error("Error loading file:", error);
+      
       } finally {
         setIsLoading(false);
         submitToArcGIS(entry);
@@ -202,7 +198,12 @@ function List({ updateTrigger }) {
     <div className="form-entries-list">
       <h2 className="submitted-entries-header">Submitted Entries</h2>
 
-      {formEntries.map((entry) => (
+      
+       {formEntries.length === 0 ? (
+        <div className="metadata-card empty-card">
+          <p>No entries have been submitted yet.</p>
+        </div>
+      ) : (formEntries.map((entry) => (
         <div key={entry.id} className="metadata-card">
           <h3>{entry.title}</h3>
           <p>
@@ -218,8 +219,8 @@ function List({ updateTrigger }) {
             <strong>Location:</strong> {entry.location}
           </p>
           <p>
-  <strong>Audio File:</strong>{" "}
-  {entry.audioFileId + (entry.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3') || "No file uploaded"}
+  <strong>File:</strong>{" "}
+  {entry.fileId + (entry.fileType === 'image' ? '.jpg' : (entry.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3')) || "No file uploaded"}
 </p>
 
           <p>
@@ -236,7 +237,8 @@ function List({ updateTrigger }) {
             onClose={() => setIsModalOpen(false)}
           />
         </div>
-      ))}
+      ))
+  )}
     </div>
   );
 }

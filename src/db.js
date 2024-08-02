@@ -17,24 +17,41 @@ const openDB = () => {
     const db = await openDB();
     const transaction = db.transaction(storeName, 'readwrite');
     const store = transaction.objectStore(storeName);
-    const id = title+Date.now();
-    await store.put({ id, title, audioFile });
+    const id = title + Date.now();
+    await store.put({ id, title, file: audioFile });
     return id;
   };
-  const getAudioFromIndexedDB = async (id) => {
+
+  const getFileFromIndexedDB = async (id) => {
     const db = await openDB();
     return new Promise((resolve, reject) => {
       const transaction = db.transaction(storeName, 'readonly');
       const store = transaction.objectStore(storeName);
+      console.log("Attempting to retrieve file with id:", id);
       const request = store.get(id);
   
       request.onsuccess = (event) => {
-        resolve(event.target);
+        console.log("Retrieved data:", event.target.result);
+        resolve(event.target.result);
       };
   
       request.onerror = (event) => {
+        console.error("Error retrieving file:", event.target.error);
         reject(event.target.error);
       };
     });
   };
-  export { openDB, saveAudioToIndexedDB, getAudioFromIndexedDB };
+
+ const saveImageToIndexedDB = async (imageFile, title) => {
+  const db = await openDB();
+  const transaction = db.transaction(storeName, 'readwrite');
+  const store = transaction.objectStore(storeName);
+  const id = title + Date.now();
+  await store.put({ id, title, file: imageFile });
+  return id;
+};
+
+  
+  
+  
+  export { openDB, saveAudioToIndexedDB, getFileFromIndexedDB,saveImageToIndexedDB };
