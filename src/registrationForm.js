@@ -118,7 +118,7 @@ function RegistrationForm({ onSubmitSuccess }) {
       {formFields.map(
         (field) =>
           (!field.tab || field.tab === activeTab) && (
-            <div key={field.id} className="registration-form">
+            <div key={field.id} className="form-field">
               <label htmlFor={field.id}>{field.label}:</label>
 
               {field.type === "custom" && field.id === "location" ? (

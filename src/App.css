@@ -12,12 +12,13 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
-
 .header-icon {
-  width: 40px; /* Set a fixed width for the icon */
-  height: 40px; /* Set a fixed height for the icon */
-  /* margin-right: 10px; */
-  object-fit: contain; /* This ensures the image maintains its aspect ratio */
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  object-fit: contain;
+  border-radius: 50%;
+  padding: 5px;
 }
 
 .app-header {
@@ -61,16 +62,35 @@
 }
 
 .registration-form {
-  max-width: 500px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+}
+.form-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
+.form-field label {
+  flex: 0 0 150px;
+  margin-right: 10px;
+  text-align: right;
+}
+
+.input-container {
+  flex: 1;
+}
+
+
+
+
+
 .registration-form div {
-  margin-bottom: 15px;
 }
 
 .registration-form label {
@@ -112,7 +132,7 @@
 }
 .form-entries-list {
   text-align: left;
-  max-width: 800px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -121,6 +141,7 @@
   margin-top: 10px;
 }
 .metadata-card {
+  max-width: 800px;
   background-color: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 8px;
@@ -128,7 +149,7 @@
   margin-bottom: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  max-width: 500px;
+  /* max-width: 500px; */
   margin-left: auto;
   margin-right: auto;
 }
@@ -228,7 +249,15 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
 }
+.location{
+  
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
 
 .location-input-container input {
   flex-grow: 1;

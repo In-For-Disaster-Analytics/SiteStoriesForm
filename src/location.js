@@ -70,7 +70,7 @@ function Location({ onLocationChange }) {
   );
 
   return (
-    <div>
+    <div className="location">
       <div className="location-input-container">
         <input
           type="text"
