@@ -92,14 +92,17 @@ function List({ updateTrigger }) {
       "https://sitestories.io/arcgis/rest/services/Hosted/Narratives/FeatureServer/0/addFeatures";
     const feature = {
       attributes: {
+        title: formData.title,
         description: formData.description,
         interviewer: formData.name,
+        account: localStorage.getItem('userName'),
         time_: new Date(formData.time).getTime(),
         audiofile: formData.fileId + (formData.fileType === 'image' ? '.jpg' : (formData.audioFileType === 'audio/x-m4a' ? '.m4a' : '.mp3')),
         notes: formData.notes,
         esrignss_latitude: formData.location[1],
         esrignss_longitude: formData.location[0],
       },
+      
       // geometry: {
       //   x: formData.location[1],
       //   y: formData.location[0],
@@ -211,6 +214,9 @@ function List({ updateTrigger }) {
           </p>
           <p>
             <strong>Interviewer:</strong> {entry.name}
+          </p>
+          <p>
+            <strong>Account:</strong> localStorage.getItem('userName')
           </p>
           <p>
             <strong>Time:</strong> {new Date(entry.time).toLocaleString()}

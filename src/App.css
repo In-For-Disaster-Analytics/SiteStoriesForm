@@ -12,6 +12,11 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+.user-greeting {
+  font-size: 16px;
+  color: #333;
+  margin-right: 15px;
+}
 .header-icon {
   width: 40px;
   height: 40px;
@@ -211,6 +216,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 }
 
 .modal-content {

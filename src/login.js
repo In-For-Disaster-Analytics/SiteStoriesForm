@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import ConfirmationModal from './confirmationModal';
 
-const Login = ({onLoginSuccess}) => {
-  const [username, setUsername] = useState('');
+const Login = ({onLoginSuccess, setUsername}) => {
+  const [username, setUsernameLocal] = useState('');
   const [password, setPassword] = useState('');
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
@@ -27,7 +27,8 @@ const Login = ({onLoginSuccess}) => {
       localStorage.setItem('jwt_expiration', response.data.result.access_token.expires_at);
       localStorage.setItem('userName', username);
       setPassword('');
-      setUsername('');
+      setUsernameLocal('')
+      setUsername(setUsername);
       
       // Show the confirmation modal
       setShowConfirmationModal(true);
@@ -41,16 +42,14 @@ const Login = ({onLoginSuccess}) => {
   };
     
 
-    
   
-
   return (
     <>
     <form onSubmit={handleSubmit} className="login-form">
       <input
         type="text"
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={(e) => setUsernameLocal(e.target.value)}
         placeholder="Username"
         required
       />
