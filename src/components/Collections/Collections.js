@@ -149,7 +149,7 @@ const Collections = forwardRef(({ username, loginTrigger }, ref) => {
           });
           const data = await response.json();
           const filteredCollections = data.filter(collection => 
-            collection.user && collection.user.username === username
+            collection.user && collection.user.username === 'wmobley'
           );
           dispatch({ type: 'SET_COLLECTIONS', payload: filteredCollections });
         } catch (error) {
