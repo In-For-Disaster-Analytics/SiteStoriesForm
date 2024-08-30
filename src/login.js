@@ -40,7 +40,7 @@ const Login = ({ onLoginSuccess }) => {
           'Authorization': `Bearer ${jwt}`
         }
       }); 
-  
+      console.log(projectsResponse.data);
       const uniqueTitles = [...new Set(projectsResponse.data.map(project => project.title))];
       dispatch({
         type: 'SET_PROJECTS',
