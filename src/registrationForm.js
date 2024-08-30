@@ -5,33 +5,13 @@ import {
   getFileFromIndexedDB,
   saveImageToIndexedDB,
 } from "./db";
+import { useApp } from './store/AppContext';
 
-const formFields = [
-  { id: "title", label: "Title", type: "text" },
-  { id: "description", label: "Description", type: "textarea" },
-  { id: "name", label: "Interviewer Name", type: "text", required: true },
-  { id: "time", label: "Time", type: "datetime-local", required: true },
-  { id: "location", label: "Location", type: "custom" },
-  {
-    id: "audio",
-    label: "Audio Narrative",
-    type: "file",
-    accept: ".mp3,.m4a",
-    required: true,
-    tab: "audio",
-  },
-  {
-    id: "image",
-    label: "Image",
-    type: "file",
-    accept: "image/jpeg",
-    required: true,
-    tab: "image",
-  },
-  { id: "notes", label: "Notes", type: "textarea" },
-];
+
 
 function RegistrationForm({ onSubmitSuccess }) {
+  const { state } = useApp();
+  const { projects } = state;
   const [formData, setFormData] = useState({});
   const [audioFile, setAudioFile] = useState(null);
   const [location, setLocation] = useState(null);
@@ -40,7 +20,37 @@ function RegistrationForm({ onSubmitSuccess }) {
   const DEFAULT_LAT =60.876549;
   const DEFAULT_LONG = -162.460444;
   
-  
+  const formFields = [
+    { id: "title", label: "Title", type: "text" },
+    { id: "description", label: "Description", type: "textarea" },
+    { id: "name", label: "Interviewer Name", type: "text", required: true },
+    { id: "time", label: "Time", type: "datetime-local", required: true },
+    { id: "location", label: "Location", type: "custom" },
+    {
+      id: "audio",
+      label: "Audio Narrative",
+      type: "file",
+      accept: ".mp3,.m4a",
+      required: true,
+      tab: "audio",
+    },
+    {
+      id: "image",
+      label: "Image",
+      type: "file",
+      accept: "image/jpeg",
+      required: true,
+      tab: "image",
+    },
+    { id: "notes", label: "Notes", type: "textarea" },
+    {
+      id: "allocation",
+      label: "Allocation",
+      type: "select",
+      required: true,
+      options: state.projects
+    },
+  ];
   
   
   const handleInputChange = (e) => {
@@ -107,6 +117,9 @@ function RegistrationForm({ onSubmitSuccess }) {
   return (
     <form onSubmit={handleSubmit} className="registration-form">
       <div className="tab-container">
+      <button type="button" onClick={() => setActiveTab('filednotes')} className={`tab-button file-type-tab ${activeTab === 'filednotes' ? 'active' : ''}`}>
+          Field Notes
+        </button>
       <button type="button" onClick={() => setActiveTab('audio')} className={`tab-button file-type-tab ${activeTab === 'audio' ? 'active' : ''}`}>
           Register Audio Narrative
         </button>
@@ -120,7 +133,6 @@ function RegistrationForm({ onSubmitSuccess }) {
           (!field.tab || field.tab === activeTab) && (
             <div key={field.id} className="form-field">
               <label htmlFor={field.id}>{field.label}:</label>
-
               {field.type === "custom" && field.id === "location" ? (
                 <Location
                   onLocationChange={(loc) =>
@@ -142,6 +154,20 @@ function RegistrationForm({ onSubmitSuccess }) {
                   onChange={handleFileChange}
                   required={field.required}
                 />
+              ) : field.type === "select" ? (
+                <select
+                  id={field.id}
+                  value={formData[field.id] || ""}
+                  onChange={handleInputChange}
+                  required={field.required}
+                >
+                  <option value="">Select an {field.label}</option>
+                  {field.options.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type={field.type}
@@ -154,7 +180,7 @@ function RegistrationForm({ onSubmitSuccess }) {
             </div>
           )
       )}
-      
+
       {audioFile && <p>Selected file: {audioFile.name}</p>}
       <button type="submit" className="submit-button">
         Register

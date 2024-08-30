@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { getFileFromIndexedDB } from "./db";
+import { getFileFromIndexedDB } from "../../db";
 // import axios from 'axios';
-import ExpiredTokenModal from "./ExpiredTokenModal";
+import ExpiredTokenModal from "../../ExpiredTokenModal";
 
 function List({ updateTrigger }) {
   const [formEntries, setFormEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  console.log(isLoading);
   useEffect(() => {
     const loadFormData = () => {
       const data = JSON.parse(localStorage.getItem("siteStoryFormData")) || [];
