@@ -177,3 +177,4 @@ Temporary Items
 *.tif
 *.ply
 *.obj
+/node_modules
